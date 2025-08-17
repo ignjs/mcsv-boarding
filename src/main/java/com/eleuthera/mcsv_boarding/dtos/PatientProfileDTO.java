@@ -10,9 +10,32 @@ import com.eleuthera.mcsv_boarding.models.PatientProfile;
  */
 public class PatientProfileDTO {
 
+    // Clase interna para representar el usuario de forma simple
+    public static class UserDTO {
+        private UUID id;
+        private String name;
+        private String email;
+
+        public UserDTO(UUID id, String name, String email) {
+            this.id = id;
+            this.name = name;
+            this.email = email;
+        }
+
+        public UUID getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+    }
+
     private UUID id;
-    private String name;
-    private String gender;
     private LocalDate birthdate;
     private double height;
     private double weight;
@@ -22,6 +45,7 @@ public class PatientProfileDTO {
     private String medications;
     private String objective;
     private String physicalActivity;
+    private UserDTO user; // Objeto anidado para los datos del usuario
 
     /**
      * Constructor vacío.
@@ -31,9 +55,18 @@ public class PatientProfileDTO {
 
     /**
      * Constructor que mapea una entidad PatientProfile a un DTO.
-     * @param patientProfile La entidad PatientProfile de la que se obtendrán los datos.
+     * 
+     * @param patientProfile La entidad PatientProfile de la que se obtendrán los
+     *                       datos.
      */
     public PatientProfileDTO(PatientProfile patientProfile) {
+        // Mapea los datos del usuario al objeto anidado si la entidad User no es nula
+        if (patientProfile.getUser() != null) {
+            this.user = new UserDTO(
+                    patientProfile.getUser().getId(),
+                    patientProfile.getUser().getName(),
+                    patientProfile.getUser().getEmail());
+        }
         this.id = patientProfile.getId();
         this.birthdate = patientProfile.getBirthdate();
         this.height = patientProfile.getHeight();
@@ -51,22 +84,6 @@ public class PatientProfileDTO {
 
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
     }
 
     public LocalDate getBirthdate() {
@@ -139,5 +156,13 @@ public class PatientProfileDTO {
 
     public void setPhysicalActivity(String physicalActivity) {
         this.physicalActivity = physicalActivity;
+    }
+
+    public UserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
     }
 }

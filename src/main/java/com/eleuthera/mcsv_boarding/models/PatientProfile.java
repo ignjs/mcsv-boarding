@@ -2,10 +2,13 @@ package com.eleuthera.mcsv_boarding.models;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.Set;
 import java.util.UUID;
 
-import org.hibernate.annotations.CollectionIdMutability;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "patient_profiles")
@@ -13,6 +16,7 @@ public class PatientProfile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID id;
     @Column(name = "birth_date")
     private LocalDate birthdate;
@@ -37,25 +41,10 @@ public class PatientProfile {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonBackReference
+    @JsonIgnore // Aislamos la serialización de este campo para evitar problemas con el proxy de Hibernate.
     private User user;
-
-    @OneToMany(mappedBy = "patientProfile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<PatientNutritionalRequirements> nutritionalRequirements;
-
-    @OneToMany(mappedBy = "patientProfile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<PatientFrequencies> frequencies;
-
-    @OneToMany(mappedBy = "patientProfile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<PatientPhysicalActivity> physicalActivities;
-
-    @OneToMany(mappedBy = "patientProfile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<PatientExpectedGoals> expectedGoals;
-
-    @OneToMany(mappedBy = "patientProfile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<DailyRecord> dailyRecords;
-
-    @OneToMany(mappedBy = "patientProfile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Plan> plans;
 
     public PatientProfile() {
     }
@@ -131,53 +120,5 @@ public class PatientProfile {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public Set<PatientNutritionalRequirements> getNutritionalRequirements() {
-        return nutritionalRequirements;
-    }
-
-    public void setNutritionalRequirements(Set<PatientNutritionalRequirements> nutritionalRequirements) {
-        this.nutritionalRequirements = nutritionalRequirements;
-    }
-
-    public Set<PatientFrequencies> getFrequencies() {
-        return frequencies;
-    }
-
-    public void setFrequencies(Set<PatientFrequencies> frequencies) {
-        this.frequencies = frequencies;
-    }
-
-    public Set<PatientPhysicalActivity> getPhysicalActivities() {
-        return physicalActivities;
-    }
-
-    public void setPhysicalActivities(Set<PatientPhysicalActivity> physicalActivities) {
-        this.physicalActivities = physicalActivities;
-    }
-
-    public Set<PatientExpectedGoals> getExpectedGoals() {
-        return expectedGoals;
-    }
-
-    public void setExpectedGoals(Set<PatientExpectedGoals> expectedGoals) {
-        this.expectedGoals = expectedGoals;
-    }
-
-    public Set<DailyRecord> getDailyRecords() {
-        return dailyRecords;
-    }
-
-    public void setDailyRecords(Set<DailyRecord> dailyRecords) {
-        this.dailyRecords = dailyRecords;
-    }
-
-    public Set<Plan> getPlans() {
-        return plans;
-    }
-
-    public void setPlans(Set<Plan> plans) {
-        this.plans = plans;
     }
 }
